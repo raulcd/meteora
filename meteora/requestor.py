@@ -2,27 +2,27 @@ import asyncio
 import requests
 
 
-def do_request(url, num_connections):
+def do_request(url, num_requests):
     responses = []
-    for i in range(num_connections):
+    for i in range(num_requests):
         responses.append(requests.get(url))
     return responses
 
 
 @asyncio.coroutine
-def run_requests(url, num_requests):
+def run_requests(url, num_requests, num_concurrent_users=1):
     loop = asyncio.get_event_loop()
     futures = []
     responses = []
-    for i in range(num_requests):
+    for i in range(num_concurrent_users):
         futures.append(
             loop.run_in_executor(
                 None, do_request, url, num_requests
             )
         )
-        for i in range(num_requests):
-            response = yield from futures[i]
-            responses.append(response)
+    for i in range(num_concurrent_users):
+        response = yield from futures[i]
+        responses.append(response)
     return responses
 
 
@@ -35,6 +35,7 @@ class Requestor(object):
         """
         self.url = url
         self.number_of_requests = number_of_requests
+        self.results = []
 
     def start_requests(self):
         loop = asyncio.get_event_loop()
@@ -43,4 +44,16 @@ class Requestor(object):
                 self.url, self.number_of_requests
             )
         )
-        print(results)
+        self.results = Result(results)
+
+
+class Result(object):
+
+    def __init__(self, responses_list):
+        """
+        """
+        self.responses_list = responses_list
+
+    def __len__(self):
+        return sum((len(response_per_user)
+                    for response_per_user in self.responses_list))

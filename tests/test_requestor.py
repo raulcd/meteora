@@ -9,7 +9,14 @@ class TestRequestor(unittest.TestCase):
         self.url = 'http://echo.jsontest.com/'
 
     def test_generate_one_request(self):
-        my_requestor = requestor.Requestor(number_of_requests=10, url=self.url)
+        my_requestor = requestor.Requestor(url=self.url)
         my_requestor.start_requests()
-        #my_requestor.wait_to_finish(timeout=3)
         self.assertIsNotNone(my_requestor.results)
+        self.assertEquals(len(my_requestor.results), 1)
+
+    def test_generate_three_requests(self):
+        my_requestor = requestor.Requestor(number_of_requests=3, url=self.url)
+        my_requestor.start_requests()
+        results = my_requestor.results
+        self.assertIsNotNone(results)
+        self.assertEquals(len(results), 3)
