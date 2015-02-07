@@ -68,8 +68,6 @@ class Requestor(object):
                 b = datetime.datetime.now().microsecond
                 if response.status_code in [402, 403, 408, 503, 504]:
                     print ( "Backing off due to status code: %d" % response[i] )
-                    print("Increasing backoff due "
-                          "to status code: %d" % response[i])
                     backoff.fail()
                 else:
                     print( "Request took %d and return %s" % ( ( b-a ), response.text) )
