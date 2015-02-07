@@ -1,6 +1,7 @@
 import unittest
 
 from meteora import requestor
+from meteora import utils
 
 
 class TestRequestor(unittest.TestCase):
@@ -20,10 +21,14 @@ class TestRequestor(unittest.TestCase):
         results = my_requestor.results
         self.assertIsNotNone(results)
         self.assertEquals(len(results), 3)
+        self.assertEquals(results.responses[0].request.method, 'GET')
 
     def test_generate_one_post_request(self):
-        my_requestor = requestor.Requestor(number_of_requests=3, url=self.url)
+        my_requestor = requestor.Requestor(
+            number_of_requests=1, url=self.url, method=utils.POST
+        )
         my_requestor.start_requests()
         results = my_requestor.results
         self.assertIsNotNone(results)
-        self.assertEquals(len(results), 3)
+        self.assertEquals(len(results), 1)
+        self.assertEquals(results.responses[0].request.method, 'POST')
