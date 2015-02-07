@@ -65,7 +65,7 @@ class Requestor(object):
         return responses
 
     @asyncio.coroutine
-    def _run_requests(self, url, num_requests, num_concurrent_users=1):
+    def _run_requests(self, url, num_requests, num_concurrent_users=65):
         loop = asyncio.get_event_loop()
         futures = []
         responses = []
