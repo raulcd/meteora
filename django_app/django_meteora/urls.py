@@ -4,10 +4,10 @@ from django.contrib import admin
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'meteora.views.home', name='home'),
+    # url(r'^$', 'django_meteora.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^meteora/', include('loadtest.urls'))
+    url(r'^django_meteora/', include('loadtest.urls'))
 )

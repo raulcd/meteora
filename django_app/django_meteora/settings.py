@@ -52,7 +52,7 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'meteora.urls'
 
-WSGI_APPLICATION = 'meteora.wsgi.application'
+WSGI_APPLICATION = 'django_meteora.wsgi.application'
 
 
 # Database
