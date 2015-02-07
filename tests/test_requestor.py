@@ -32,3 +32,14 @@ class TestRequestor(unittest.TestCase):
         self.assertIsNotNone(results)
         self.assertEquals(len(results), 1)
         self.assertEquals(results.responses[0].request.method, 'POST')
+
+    def test_post_one_request_with_data(self):
+        data = {'key': 'value'}
+        my_requestor = requestor.Requestor(
+            number_of_requests=1, url=self.url, method=utils.POST,
+            data=data
+        )
+        my_requestor.start_requests()
+        results = my_requestor.results
+        self.assertEquals(results.responses[0].request.body, 'key=value')
+        self.assertEquals(results.responses[0].request.method, 'POST')
