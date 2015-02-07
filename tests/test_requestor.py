@@ -32,3 +32,9 @@ class TestRequestor(unittest.TestCase):
         self.assertIsNotNone(results)
         self.assertEquals(len(results), 1)
         self.assertEquals(results.responses[0].request.method, 'POST')
+
+    def test_generate_request_method(self):
+        my_requestor = requestor.Requestor(number_of_requests=utils.generate_request, url=self.url)
+        my_requestor.start_requests()
+        self.assertIsNotNone(my_requestor.results)
+        self.assertEquals(len(my_requestor.results), 1)

@@ -1,7 +1,7 @@
 import asyncio
 import requests
 import functools
-
+import types
 from meteora import utils
 import time
 import datetime
@@ -53,18 +53,17 @@ class Requestor(object):
         )
         self.results = Result(results)
 
-    def _do_request(self, url, num_requests):
+    def _do_request(self, threadNumber, num_concurrent_users, url, num_requests):
         responses = []
         backoff = Backoff()
-        for i in range(num_requests):
+        for i in num_requests(threadNum=threadNumber, numberOfThreads=num_concurrent_users):
             while backoff.loop():
+                a = datetime.datetime.now().microsecond
                 if self.method == utils.GET:
-                    response = requests.get(url, *self.args, **self.kwargs)
+                    response = requests.get( url + i, *self.args, **self.kwargs )
                 elif self.method == utils.POST:
                     response = requests.post(url, *self.args, **self.kwargs)
                     # TODO add other methods
-                a = datetime.datetime.now().microsecond
-                response = requests.get( url + str( i ), *self.args, **self.kwargs )
                 b = datetime.datetime.now().microsecond
                 if response.status_code in [402, 403, 408, 503, 504]:
                     print ( "Backing off due to status code: %d" % response[i] )
@@ -84,7 +83,7 @@ class Requestor(object):
         for i in range(num_concurrent_users):
             futures.append(
                 loop.run_in_executor(
-                    None, self._do_request, url, num_requests
+                    None, self._do_request, i, num_concurrent_users, url, num_requests
                 )
             )
         for i in range(num_concurrent_users):
