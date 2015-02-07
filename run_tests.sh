@@ -1,1 +1,1 @@
-PYTHONPATH=..:$PYTHONPATH py.test
+PYTHONPATH=..:$PYTHONPATH py.test -s

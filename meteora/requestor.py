@@ -1,14 +1,19 @@
 import asyncio
 import requests
+import functools
+
+from meteora import utils
 
 
 class Requestor(object):
     """
     Main class to generate requests.
     """
-    def __init__(self, url, number_of_requests=None, *args, **kwargs):
+    def __init__(self, url, method=utils.GET, number_of_requests=None,
+                 *args, **kwargs):
         """
         """
+        self.method = method
         self.url = url
         self.number_of_requests = number_of_requests
         self.results = []
@@ -27,7 +32,11 @@ class Requestor(object):
     def _do_request(self, url, num_requests):
         responses = []
         for i in range(num_requests):
-            responses.append(requests.get(url, *self.args, **self.kwargs))
+            if self.method == utils.GET:
+                responses.append(requests.get(url, *self.args, **self.kwargs))
+            elif self.method == utils.POST:
+                responses.append(requests.post(url, *self.args, **self.kwargs))
+            # TODO add other methods
         return responses
 
     @asyncio.coroutine
@@ -57,3 +66,7 @@ class Result(object):
     def __len__(self):
         return sum((len(response_per_user)
                     for response_per_user in self.responses_list))
+
+    @property
+    def responses(self):
+        return functools.reduce(lambda x, y: x.extend(y), self.responses_list)
