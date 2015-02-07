@@ -6,18 +6,20 @@ class Requestor(object):
     """
     Main class to generate requests.
     """
-    def __init__(self, url, number_of_requests=1, *args, **kwargs):
+    def __init__(self, url, number_of_requests=None, *args, **kwargs):
         """
         """
         self.url = url
         self.number_of_requests = number_of_requests
         self.results = []
+        self.args = args
+        self.kwargs = kwargs
 
     def start_requests(self):
         loop = asyncio.get_event_loop()
         results = loop.run_until_complete(
             self._run_requests(
-                self.url, self.number_of_requests
+                self.url, self.number_of_requests,
             )
         )
         self.results = Result(results)
@@ -25,7 +27,7 @@ class Requestor(object):
     def _do_request(self, url, num_requests):
         responses = []
         for i in range(num_requests):
-            responses.append(requests.get(url))
+            responses.append(requests.get(url, *self.args, **self.kwargs))
         return responses
 
     @asyncio.coroutine
