@@ -50,7 +50,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'meteora.urls'
+ROOT_URLCONF = 'django_meteora.urls'
 
 WSGI_APPLICATION = 'django_meteora.wsgi.application'
 
