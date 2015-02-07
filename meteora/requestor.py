@@ -58,26 +58,25 @@ class Requestor(object):
         backoff = Backoff()
         for i in range(num_requests):
             while backoff.loop():
+                start_time = datetime.datetime.now().microsecond
                 if self.method == utils.GET:
                     response = requests.get(url, *self.args, **self.kwargs)
                 elif self.method == utils.POST:
                     response = requests.post(url, *self.args, **self.kwargs)
                     # TODO add other methods
-                a = datetime.datetime.now().microsecond
-                response = requests.get( url + str( i ), *self.args, **self.kwargs )
-                b = datetime.datetime.now().microsecond
+                end_time = datetime.datetime.now().microsecond
+                response.execution_time = end_time - start_time
                 if response.status_code in [402, 403, 408, 503, 504]:
-                    print ( "Backing off due to status code: %d" % response[i] )
+                    print ("Backing off due to status code: %d" % response[i])
                     backoff.fail()
                 else:
-                    print( "Request took %d and return %s" % ( ( b-a ), response.text) )
                     responses.append(response)
                     break
 
         return responses
 
     @asyncio.coroutine
-    def _run_requests(self, url, num_requests, num_concurrent_users=65):
+    def _run_requests(self, url, num_requests, num_concurrent_users=1):
         loop = asyncio.get_event_loop()
         futures = []
         responses = []
