@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Testable urls</title>
+</head>
+<body>
+    <h1>Testable urls</h1>
+    <select>
+        {% for url in available_views %}
+            <option>{{ url }}</option>
+        {% endfor %}
+    </select><br><br>
+
+    Query Params: <textarea>param1=test&amp;param2=test2</textarea><br><br>
+    Post Params: <textarea>param1=test&amp;param2=test2</textarea><br><br>
+    Number of requests: <input type="text" value="100"><br><br>
+
+    <button>GET</button> <button>POST</button> <button>PUT</button> <button>HEAD</button> <button>PATCH</button>
+
+
+</body>
+</html>
