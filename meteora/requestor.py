@@ -3,6 +3,29 @@ import requests
 import functools
 
 from meteora import utils
+import time
+
+
+class Backoff():
+    """
+    Implements exponential backoff.
+    """
+    def __init__(self, maxretries=8):
+        self.retry = 0
+        self.maxretries = maxretries
+        self.first = True
+
+    def loop(self):
+        if self.first:
+            self.first = False
+            return True
+        else:
+            return self.retry < self.maxretries
+
+    def fail(self):
+        self.retry += 1
+        delay = 2 ** self.retry
+        time.sleep(delay)
 
 
 class Requestor(object):
@@ -31,12 +54,22 @@ class Requestor(object):
 
     def _do_request(self, url, num_requests):
         responses = []
+        backoff = Backoff()
         for i in range(num_requests):
-            if self.method == utils.GET:
-                responses.append(requests.get(url, *self.args, **self.kwargs))
-            elif self.method == utils.POST:
-                responses.append(requests.post(url, *self.args, **self.kwargs))
-            # TODO add other methods
+            while backoff.loop():
+                if self.method == utils.GET:
+                    response = requests.get(url, *self.args, **self.kwargs)
+                elif self.method == utils.POST:
+                    response = requests.post(url, *self.args, **self.kwargs)
+                    # TODO add other methods
+                if response.status_code in [402, 403, 408, 503, 504]:
+                    print("Increasing backoff due "
+                          "to status code: %d" % response[i])
+                    backoff.fail()
+                else:
+                    responses.append(response)
+                    break
+
         return responses
 
     @asyncio.coroutine
