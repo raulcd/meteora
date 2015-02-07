@@ -1,0 +1,1 @@
+PYTHONPATH=..:$PYTHONPATH py.test
