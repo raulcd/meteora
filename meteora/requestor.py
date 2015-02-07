@@ -4,6 +4,7 @@ import functools
 
 from meteora import utils
 import time
+import datetime
 
 
 class Backoff():
@@ -57,14 +58,16 @@ class Requestor(object):
         backoff = Backoff()
         for i in range(num_requests):
             while backoff.loop():
+                start_time = datetime.datetime.now().microsecond
                 if self.method == utils.GET:
                     response = requests.get(url, *self.args, **self.kwargs)
                 elif self.method == utils.POST:
                     response = requests.post(url, *self.args, **self.kwargs)
                     # TODO add other methods
+                end_time = datetime.datetime.now().microsecond
+                response.execution_time = end_time - start_time
                 if response.status_code in [402, 403, 408, 503, 504]:
-                    print("Increasing backoff due "
-                          "to status code: %d" % response[i])
+                    print ("Backing off due to status code: %d" % response[i])
                     backoff.fail()
                 else:
                     responses.append(response)
