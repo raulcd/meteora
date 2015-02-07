@@ -64,6 +64,16 @@ class Requestor(object):
                 elif self.method == utils.POST:
                     response = requests.post(url, *self.args, **self.kwargs)
                     # TODO add other methods
+                elif self.method == utils.PUT:
+                    response = request.put(url, *self.args, **self.kwargs)
+                elif self.method == utils.HEAD:
+                    response = request.head(url, *self.args, **self.kwargs)
+                elif self.method == utils.DELETE:
+                    response = request.delete(url, *self.args, **self.kwargs)
+                elif self.method == utils.PATCH:
+                    response = requests.patch(url, *self.args, **self.jwargs)
+                else:
+                    raise NotImplementedError()
                 end_time = datetime.datetime.now().microsecond
                 response.execution_time = end_time - start_time
                 if response.status_code in [402, 403, 408, 503, 504]:
