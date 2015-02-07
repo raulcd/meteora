@@ -20,6 +20,7 @@ def run_requests(url, num_requests):
 	return responses
 
 
+
 import aiohttp
 
 @asyncio.coroutine
@@ -27,7 +28,6 @@ def run_requests_async(url, num_requests):
 	response = yield from aiohttp.request('GET', url)
 	assert response.status == 200
 	return (yield from response.read())
-
 
 class Requestor(object):
 	"""
