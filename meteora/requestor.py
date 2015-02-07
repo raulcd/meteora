@@ -1,5 +1,26 @@
 import asyncio
 import requests
+import time
+
+
+class Backoff():
+    """
+    Implements exponential backoff.
+    """
+    def __init__( self, maxretries=8 ):
+        self.retry = 0
+        self.maxretries = maxretries
+        self.first = True
+    def loop(self):
+        if self.first:
+            self.first = False
+            return True
+        else:
+            return self.retry < self.maxretries
+    def fail(self):
+        self.retry += 1
+        delay = 2 ** self.retry
+        time.sleep(delay)
 
 
 class Requestor(object):
@@ -26,8 +47,18 @@ class Requestor(object):
 
     def _do_request(self, url, num_requests):
         responses = []
+        backoff = Backoff()
         for i in range(num_requests):
-            responses.append(requests.get(url, *self.args, **self.kwargs))
+            while backoff.loop():
+                response = requests.get(url, *self.args, **self.kwargs)
+                if response.status_code in [402, 403, 408, 503, 504]:
+                    print ( "Increasing backoff due to status code: %d" % response[i] )
+                    backoff.fail()
+                else:
+                    print(response.text)
+                    responses.append(response)
+                    break
+
         return responses
 
     @asyncio.coroutine
