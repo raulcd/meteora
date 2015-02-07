@@ -1,17 +1,5 @@
 import asyncio
-import requests
-
-@asyncio.coroutine
-def run_requests(url, num_requests):
-    loop = asyncio.get_event_loop()
-    future = []
-    response = []
-    for i in range(num_requests):
-        future[i] = loop.run_in_executor(None, requests.get, url)
-    
-    for i in range(num_requests):
-        response[i] = yield from future[i]
-        print(response[i].text)
+import aiohttp
 
 
 class Requestor(object):
@@ -24,8 +12,17 @@ class Requestor(object):
         """
         self.url= url
         self.number_of_requests = number_of_requests
+        self.results = {} 
 
     def start_requests(self):
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(run_requests(self.url, self.number_of_requests))
+        tasks = []
+        for i in range(self.number_of_requests):
+            tasks.append(asyncio.async(self.make_request(self.url, i)))
+        loop.run_until_complete(asyncio.wait(tasks))
 
+    @asyncio.coroutine
+    def make_request(self, url, request_number):
+        response = yield from aiohttp.request('GET', url)
+        self.results[request_number] =  yield from response.read()
+        print(request_number)
