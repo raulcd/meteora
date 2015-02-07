@@ -15,3 +15,12 @@ Running tests
 ```
 ./run_tests.sh
 ```
+
+Contributors
+------------
+
+Fran Hermoso
+Anshuman Kanetkar
+Bri Murphy
+Aleksej Polukarov
+Raul Cumplido

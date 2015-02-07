@@ -1,7 +1,7 @@
 import asyncio
 import requests
 import functools
-
+import types
 from meteora import utils
 import time
 import datetime
@@ -53,47 +53,37 @@ class Requestor(object):
         )
         self.results = Result(results)
 
-    def _do_request(self, url, num_requests):
+    def _do_request(self, threadNumber, num_concurrent_users, url, num_requests):
         responses = []
         backoff = Backoff()
-        for i in range(num_requests):
+        for i in num_requests(threadNum=threadNumber, numberOfThreads=num_concurrent_users):
             while backoff.loop():
-                start_time = datetime.datetime.now().microsecond
+                a = datetime.datetime.now().microsecond
                 if self.method == utils.GET:
-                    response = requests.get(url, *self.args, **self.kwargs)
+                    response = requests.get( url + i, *self.args, **self.kwargs )
                 elif self.method == utils.POST:
                     response = requests.post(url, *self.args, **self.kwargs)
                     # TODO add other methods
-                elif self.method == utils.PUT:
-                    response = request.put(url, *self.args, **self.kwargs)
-                elif self.method == utils.HEAD:
-                    response = request.head(url, *self.args, **self.kwargs)
-                elif self.method == utils.DELETE:
-                    response = request.delete(url, *self.args, **self.kwargs)
-                elif self.method == utils.PATCH:
-                    response = requests.patch(url, *self.args, **self.jwargs)
-                else:
-                    raise NotImplementedError()
-                end_time = datetime.datetime.now().microsecond
-                response.execution_time = end_time - start_time
+                b = datetime.datetime.now().microsecond
                 if response.status_code in [402, 403, 408, 503, 504]:
-                    print ("Backing off due to status code: %d" % response[i])
+                    print ( "Backing off due to status code: %d" % response[i] )
                     backoff.fail()
                 else:
+                    print( "Request took %d and return %s" % ( ( b-a ), response.text) )
                     responses.append(response)
                     break
 
         return responses
 
     @asyncio.coroutine
-    def _run_requests(self, url, num_requests, num_concurrent_users=1):
+    def _run_requests(self, url, num_requests, num_concurrent_users=65):
         loop = asyncio.get_event_loop()
         futures = []
         responses = []
         for i in range(num_concurrent_users):
             futures.append(
                 loop.run_in_executor(
-                    None, self._do_request, url, num_requests
+                    None, self._do_request, i, num_concurrent_users, url, num_requests
                 )
             )
         for i in range(num_concurrent_users):
