@@ -58,23 +58,13 @@ class Requestor(object):
         backoff = Backoff()
         for i in num_requests(threadNum=threadNumber, numberOfThreads=num_concurrent_users):
             while backoff.loop():
+                a = datetime.datetime.now().microsecond
                 if self.method == utils.GET:
-                    response = requests.get(url, *self.args, **self.kwargs)
+                    response = requests.get( url + i, *self.args, **self.kwargs )
                 elif self.method == utils.POST:
                     response = requests.post(url, *self.args, **self.kwargs)
                     # TODO add other methods
-                elif self.method == utils.PUT:
-                    response = request.put(url, *self.args, **self.kwargs)
-                elif self.method == utils.HEAD:
-                    response = request.head(url, *self.args, **self.kwargs)
-                elif self.method == utils.DELETE:
-                    response = request.delete(url, *self.args, **self.kwargs)
-                elif self.method == utils.PATCH:
-                    response = requests.patch(url, *self.args, **self.jwargs)
-                else:
-                    raise NotImplementedError()
-                end_time = datetime.datetime.now().microsecond
-                response.execution_time = end_time - start_time
+                b = datetime.datetime.now().microsecond
                 if response.status_code in [402, 403, 408, 503, 504]:
                     print ( "Backing off due to status code: %d" % response[i] )
                     backoff.fail()
@@ -93,7 +83,7 @@ class Requestor(object):
         for i in range(num_concurrent_users):
             futures.append(
                 loop.run_in_executor(
-                    None, self._do_request, url, num_requests
+                    None, self._do_request, i, num_concurrent_users, url, num_requests
                 )
             )
         for i in range(num_concurrent_users):
