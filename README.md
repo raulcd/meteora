@@ -19,8 +19,8 @@ Running tests
 Contributors
 ------------
 
+* Raúl Cumplido
 * Fran Hermoso
 * Anshuman Kanetkar
 * Bri Murphy
 * Aleksej Polukarov
-* Raul Cumplido
