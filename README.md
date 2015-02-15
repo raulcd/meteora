@@ -30,6 +30,7 @@ tox
 Contributors
 ------------
 
+* Davide Ceretti
 * Raúl Cumplido
 * Fran Hermoso
 * Anshuman Kanetkar
