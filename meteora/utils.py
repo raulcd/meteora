@@ -4,4 +4,3 @@ DELETE = 'DELETE'
 PUT = 'PUT'
 PATCH = 'PATCH'
 HEAD = 'HEAD'
-
