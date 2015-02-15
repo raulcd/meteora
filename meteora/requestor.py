@@ -1,10 +1,8 @@
 import asyncio
 import requests
 import functools
-import types
+
 from meteora import utils
-import time
-import datetime
 
 
 class Requestor(object):
