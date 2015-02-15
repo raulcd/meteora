@@ -5,15 +5,26 @@ A performance testing web application made in Python
 Installation
 ------------
 
+Note: Meteora requires Python 3.4
+
 ```
-pip install -r requirements.txt
+mkvirtualenv meteora
+pip install -e .
 ```
 
 Running tests
 -------------
 
+First, install tox:
+
 ```
-./run_tests.sh
+sudo pip install tox
+```
+
+Then run:
+
+```
+tox
 ```
 
 Contributors
