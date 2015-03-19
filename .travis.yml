@@ -1,0 +1,8 @@
+language: python
+python:
+  - "3.4"
+# command to install python dependencies
+install:
+  - "pip install tox"
+# command to run tests
+script: "tox"
