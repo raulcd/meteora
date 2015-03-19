@@ -1,3 +1,5 @@
+[![Alt text](https://api.travis-ci.org/raulcd/meteora.svg?branch=master)](https://travis-ci.org/raulcd/meteora)
+
 Meteora
 -------
 A performance testing web application made in Python
