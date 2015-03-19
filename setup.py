@@ -8,7 +8,7 @@ except ImportError:
     from distutils.core import setup
 
 requirements = [
-    'requests==2.5.1',
+    'aiohttp==0.14.4',
 ]
 
 test_requirements = [
