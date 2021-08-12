@@ -25,3 +25,6 @@ class TestRequestor(unittest.TestCase):
         my_requestor.start_requests()
         self.assertIsNotNone(my_requestor.results)
         self.assertEquals(len(my_requestor.results), 10)
+
+    def test_validate_github_editor(self):
+        pass
